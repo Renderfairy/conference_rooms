@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block container %}
+    <body>
+    <h1 class="m-3">Room list</h1>
+    <table class="table">
+        <tr class="d-flex">
+            <th scope="col" class="col-2">Room Name</th>
+            <th scope="col" class="col-2">Capacity</th>
+            <th scope="col" class="col-2">Projector availability</th>
+            <th scope="col" class="col-2">Availability</th>
+        </tr>
+        {% for room in rooms %}
+            <tr class="d-flex table-row border-top border-secondary">
+                <td class="col-2"><a href="{% url 'room_detail' room.id %}">{{ room.room_name }}</a></td>
+                <td class="col-2">{{ room.capacity }}</td>
+                {% if room.projector %}
+                    <td class="col-2" style="color:green">&#9745;</td>
+                {% else %}
+                    <td class="col-2" style="color:red">&#9746;</td>
+                {% endif %}
+            {% if room.reserved %}
+                <td class="col-2" style="color:red;">Booked</td>
+            {% else %}
+                <td class="col-2" style="color:green;">Available</td>
+            {% endif %}
+                <td class="col-1"><a href="{% url 'room_edit' room.id %}"><button type="button" class="btn btn-outline-warning">Edit</button></a></td>
+                <td class="col-1"><a href="{% url 'room_delete' room.id %}"><button type="button" class="btn btn-outline-danger">Delete</button></a></td>
+                <td class="col-1 ml-3"><a href="{% url 'room_reservation' room.id %}"><button type="button" class="btn btn-outline-success">Book</button></a></td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="6">No rooms available</td></tr>
+        {% endfor %}
+        <tr>
+            <td class="border-top border-secondary">
+                <a href="{% url 'room_add' %}"><button type="button" class="btn btn-primary">Add new room</button></a>
+            </td>
+        </tr>
+    </table>
+
+
+
+<div class="card m-3 p-2">
+    <h3>Search</h3>
+  <div class="card-body">
+    <form action="/search" method="GET">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="room-name">Room name</label>
+        <input type="text" class="form-control" id="room-name" aria-describedby="room-name-help" placeholder="Room name" name="room-name">
+      </div>
+      <div class="form-group">
+        <label for="capacity">Minimum capacity</label>
+        <input type="number" step="1" class="form-control" id="capacity" placeholder="10" name="capacity">
+      </div>
+
+      <div class="form-check">
+        <input type="checkbox" class="form-check-input" name="projector" id="projector">
+        <label class="form-check-label" for="projector">Projector availability</label>
+      </div>
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+  </div>
+    </body>
+{% endblock %}
